@@ -1,6 +1,6 @@
 [package]
 name = "sparro"
-version = "0.2.0"
+version = "0.2.1"
 description = "Sparro: a private, offline budgeting app for Windows"
 authors = ["Sparro"]
 edition = "2024"
