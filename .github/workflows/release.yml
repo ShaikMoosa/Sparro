@@ -25,7 +25,9 @@ jobs:
         with:
           workspaces: src-tauri
 
-      - run: npm ci
+      # npm on Windows sometimes omits optional deps from the lock file; fall back rather than fail.
+      - run: npm ci || npm install --no-audit --no-fund
+        shell: bash
       - run: npm test
 
       - uses: tauri-apps/tauri-action@v0
