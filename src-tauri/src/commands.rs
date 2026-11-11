@@ -8,17 +8,17 @@ use tauri::State;
 
 use crate::error::AppResult;
 use crate::models::*;
-use crate::service::{accounts, categories, dashboard, investments, ledger, settings, subscriptions};
+use crate::service::{accounts, categories, dashboard, data, investments, ledger, settings, subscriptions};
 
 pub struct Db(pub Mutex<Connection>);
 
 impl Db {
-    fn lock(&self) -> MutexGuard<'_, Connection> {
+    pub(crate) fn lock(&self) -> MutexGuard<'_, Connection> {
         self.0.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
     }
 }
 
-fn today() -> NaiveDate {
+pub(crate) fn today() -> NaiveDate {
     chrono::Local::now().date_naive()
 }
 
@@ -180,4 +180,18 @@ pub fn get_dashboard(db: State<Db>, month: String) -> AppResult<Dashboard> {
 #[tauri::command]
 pub fn get_today() -> String {
     crate::service::fmt_date(today())
+}
+
+// Backup, restore & export (SYS-04, SYS-05)
+#[tauri::command]
+pub fn backup_database(db: State<Db>, path: String) -> AppResult<()> {
+    data::backup(&db.lock(), std::path::Path::new(&path))
+}
+#[tauri::command]
+pub fn restore_database(db: State<Db>, path: String) -> AppResult<()> {
+    data::restore(&mut db.lock(), std::path::Path::new(&path))
+}
+#[tauri::command]
+pub fn export_expenses(db: State<Db>, filter: ExpenseFilter, path: String) -> AppResult<usize> {
+    data::export_expenses(&db.lock(), &filter, std::path::Path::new(&path))
 }

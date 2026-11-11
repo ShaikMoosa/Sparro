@@ -334,6 +334,10 @@ pub struct Settings {
     pub wants_pct: i64,
     pub savings_pct: i64,
     pub goal_amount: i64,
+    /// Show a Windows notification before active subscriptions renew.
+    pub reminders_enabled: bool,
+    /// How many days before the renewal to notify (1–7).
+    pub reminder_days: i64,
 }
 
 // ---------- Dashboard ----------

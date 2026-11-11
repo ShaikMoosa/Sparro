@@ -4,8 +4,10 @@
 pub mod accounts;
 pub mod categories;
 pub mod dashboard;
+pub mod data;
 pub mod investments;
 pub mod ledger;
+pub mod reminders;
 pub mod settings;
 pub mod subscriptions;
 

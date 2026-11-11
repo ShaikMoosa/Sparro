@@ -14,6 +14,8 @@ pub fn get(conn: &Connection) -> AppResult<Settings> {
         wants_pct: read(conn, "wants_pct")?,
         savings_pct: read(conn, "savings_pct")?,
         goal_amount: read(conn, "goal_amount")?,
+        reminders_enabled: read(conn, "reminders_enabled")? != 0,
+        reminder_days: read(conn, "reminder_days")?,
     })
 }
 
@@ -31,12 +33,17 @@ pub fn save(conn: &mut Connection, s: &Settings) -> AppResult<Settings> {
     if s.goal_amount <= 0 {
         return validation("Goal amount must be more than ₹0.");
     }
+    if !(1..=7).contains(&s.reminder_days) {
+        return validation("Remind me between 1 and 7 days before a renewal.");
+    }
     let tx = conn.transaction()?;
     for (k, v) in [
         ("needs_pct", s.needs_pct),
         ("wants_pct", s.wants_pct),
         ("savings_pct", s.savings_pct),
         ("goal_amount", s.goal_amount),
+        ("reminders_enabled", s.reminders_enabled as i64),
+        ("reminder_days", s.reminder_days),
     ] {
         tx.execute(
             "INSERT INTO settings (key, value) VALUES (?1, ?2) ON CONFLICT(key) DO UPDATE SET value = excluded.value",

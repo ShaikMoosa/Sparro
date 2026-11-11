@@ -103,7 +103,7 @@ function seed() {
     { id: id(), name: "UTI Nifty 50 Index Fund", plan: "Direct · Growth", units: 1000, avgNav: 120_00, currentNav: 132_00, sipAmount: 4_000_00, sipDay: 5, sipStart: "2025-01-05" },
     { id: id(), name: "Parag Parikh Flexi Cap Fund", plan: "Direct · Growth", units: 2000, avgNav: 50_00, currentNav: 55_00, sipAmount: 3_000_00, sipDay: 5, sipStart: "2025-01-05" },
   ];
-  const settings: Settings = { needsPct: 50, wantsPct: 30, savingsPct: 20, goalAmount: 20_00_000_00 };
+  const settings: Settings = { needsPct: 50, wantsPct: 30, savingsPct: 20, goalAmount: 20_00_000_00, remindersEnabled: true, reminderDays: 2 };
   return { categories, accounts, expenses, incomes, transfers, subs, stocks, funds, settings };
 }
 
@@ -383,11 +383,33 @@ const handlers: Record<string, (a: any) => unknown> = {
     const total = input.needsPct + input.wantsPct + input.savingsPct;
     if (total !== 100) fail(`Your percentages add up to ${total}%. They must add up to 100%.`);
     if (input.goalAmount <= 0) fail("Goal amount must be more than ₹0.");
+    if (!(input.reminderDays >= 1 && input.reminderDays <= 7)) fail("Remind me between 1 and 7 days before a renewal.");
     db.settings = { ...input };
     return { ...db.settings };
   },
   get_dashboard: ({ month }) => dashboard(month),
   get_today: () => todayISO(),
+  backup_database: () => undefined,
+  restore_database: () => fail("Restoring a backup works in the desktop app."),
+  export_expenses: ({ filter, path }: { filter: ExpenseFilter; path: string }) => {
+    const rows = handlers.list_expenses({ filter }) as Expense[];
+    const field = (v: string) => {
+      const t = /^[=+\-@]/.test(v) ? `'${v}` : v;
+      return /[",\r\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
+    };
+    const label = { needs: "Needs", wants: "Wants", savings: "Savings" } as const;
+    const lines = rows.map((e) =>
+      [`${e.date.slice(8, 10)}-${e.date.slice(5, 7)}-${e.date.slice(0, 4)}`, field(e.description), field(e.categoryName), label[e.bucket], field(e.accountName), (e.amount / 100).toFixed(2)].join(","),
+    );
+    const csv = "\ufeffDate,Description,Category,Bucket,Account,Amount (INR)\r\n" + lines.map((l) => l + "\r\n").join("");
+    if (typeof document !== "undefined" && typeof URL.createObjectURL === "function") {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+      a.download = path;
+      a.click();
+    }
+    return rows.length;
+  },
 };
 
 function validateStock(input: any): Omit<StockRow, "id"> {

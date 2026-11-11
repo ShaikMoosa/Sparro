@@ -8,6 +8,8 @@ import type { ExpenseFilter } from "../bindings/ExpenseFilter";
 import { BucketBadge, Button, CategoryInitial, ConfirmDelete, EmptyState, FilterSelect, PageHeader, RowActions, useToast } from "../components/ui";
 import { BUCKETS, BUCKET_LABEL } from "../lib/colors";
 import { currentMonth, dayMonth, longDate, monthName, plural, rupees } from "../lib/format";
+import { errorMessage } from "../api/client";
+import { CSV_FILTER, chooseSavePath, fileName } from "../lib/files";
 import { ExpenseDialog } from "./ExpenseDialog";
 
 type Filters = { search: string; bucket: Bucket | "all"; categoryId: number | "all"; accountId: number | "all"; from: string; to: string };
@@ -42,6 +44,23 @@ export function ExpensesPage() {
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const remove = useSave((id: number) => api.expenses.remove(id));
   const set = <K extends keyof Filters>(k: K, v: Filters[K]) => setFilters((f) => ({ ...f, [k]: v }));
+  const [exporting, setExporting] = useState(false);
+
+  // SYS-05: export exactly what the current filters show.
+  async function exportCsv() {
+    const range = filters.from || filters.to ? `${filters.from || "start"}-to-${filters.to || "today"}` : month;
+    const path = await chooseSavePath(`sparro-expenses-${range}.csv`, [CSV_FILTER]);
+    if (!path) return;
+    setExporting(true);
+    try {
+      const count = await api.data.exportExpenses(rangeError ? { ...query, from: undefined, to: undefined } : query, path);
+      toast(`Exported ${plural(count, "expense")} to ${fileName(path)}.`);
+    } catch (e) {
+      toast(errorMessage(e), "error");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   const heading =
     filters.from || filters.to
@@ -57,9 +76,14 @@ export function ExpensesPage() {
         title="Expenses"
         description="Log daily spending and review every entry. Balances update automatically."
         actions={
-          <Button emphasis onPress={() => setAdding(true)}>
-            Add expense
-          </Button>
+          <>
+            <Button onPress={exportCsv} isDisabled={exporting || expenses.length === 0}>
+              Export CSV
+            </Button>
+            <Button emphasis onPress={() => setAdding(true)}>
+              Add expense
+            </Button>
+          </>
         }
       />
 

@@ -4,6 +4,7 @@
  */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -56,6 +57,49 @@ describe.each([
     await waitFor(() => expect(screen.getAllByText(ready).length).toBeGreaterThan(0));
     const results = await axe(container, axeOptions);
     expect(results).toHaveNoViolations();
+  });
+});
+
+describe("settings", () => {
+  beforeEach(() => resetMock(false));
+
+  it("warns before leaving with unsaved changes", async () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const router = createMemoryRouter(
+      [{ element: <Layout />, children: [{ path: "/settings", element: <SettingsPage /> }, { path: "/", element: <p>Dashboard page</p> }] }],
+      { initialEntries: ["/settings"] },
+    );
+    render(
+      <QueryClientProvider client={client}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </QueryClientProvider>,
+    );
+    const reminders = await screen.findByRole("switch", { name: "Remind me before renewals" });
+    await waitFor(() => expect(reminders).toBeChecked());
+    const user = userEvent.setup();
+    await user.click(reminders);
+    expect(reminders).not.toBeChecked();
+    await user.click(screen.getByRole("link", { name: "Dashboard" }));
+
+    expect(await screen.findByRole("alertdialog", { name: "Leave without saving?" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Stay on this page" }));
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
+    expect(router.state.location.pathname).toBe("/settings");
+    expect(screen.getByRole("switch", { name: "Remind me before renewals" })).not.toBeChecked();
+
+    // Leaving discards the change.
+    await user.click(screen.getByRole("link", { name: "Dashboard" }));
+    await user.click(await screen.findByRole("button", { name: "Leave without saving" }));
+    await waitFor(() => expect(router.state.location.pathname).toBe("/"));
+  });
+
+  it("shows reminder and backup controls", async () => {
+    renderAt("/settings", <SettingsPage />);
+    expect(await screen.findByRole("switch", { name: "Remind me before renewals" })).toBeChecked();
+    expect(screen.getByRole("button", { name: "Back up…" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Restore from backup…" })).toBeInTheDocument();
   });
 });
 

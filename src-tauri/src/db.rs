@@ -5,7 +5,10 @@ use rusqlite::{Connection, params};
 use crate::error::AppResult;
 
 /// Ordered schema migrations; `PRAGMA user_version` records how many have run.
-const MIGRATIONS: &[&str] = &[include_str!("../migrations/001_init.sql")];
+pub const MIGRATIONS: &[&str] = &[
+    include_str!("../migrations/001_init.sql"),
+    include_str!("../migrations/002_reminders.sql"),
+];
 
 pub fn open(path: &Path) -> AppResult<Connection> {
     let mut conn = Connection::open(path)?;
@@ -19,7 +22,8 @@ pub fn open_in_memory() -> AppResult<Connection> {
     Ok(conn)
 }
 
-fn prepare(conn: &mut Connection) -> AppResult<()> {
+/// Pragmas, migrations and first-run defaults. Also re-run after a restore.
+pub fn prepare(conn: &mut Connection) -> AppResult<()> {
     conn.pragma_update(None, "foreign_keys", "ON")?;
     conn.pragma_update(None, "journal_mode", "WAL")?;
     migrate(conn)?;
@@ -63,6 +67,9 @@ pub const DEFAULT_SETTINGS: &[(&str, &str)] = &[
     ("savings_pct", "20"),
     // ₹20,00,000 in paise
     ("goal_amount", "200000000"),
+    // Windows renewal reminders (SUB-09)
+    ("reminders_enabled", "1"),
+    ("reminder_days", "2"),
 ];
 
 fn seed(conn: &Connection) -> AppResult<()> {

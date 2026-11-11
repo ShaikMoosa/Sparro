@@ -178,10 +178,12 @@ fn expense_filters_combine() {
 #[test]
 fn settings_must_total_100() {
     let mut c = conn();
-    let bad = Settings { needs_pct: 50, wants_pct: 30, savings_pct: 30, goal_amount: 1 };
+    let bad = Settings { needs_pct: 50, wants_pct: 30, savings_pct: 30, goal_amount: 1, reminders_enabled: true, reminder_days: 2 };
     assert!(settings::save(&mut c, &bad).is_err());
-    let ok = Settings { needs_pct: 60, wants_pct: 20, savings_pct: 20, goal_amount: 1_00 };
-    assert_eq!(settings::save(&mut c, &ok).unwrap().needs_pct, 60);
+    let ok = Settings { needs_pct: 60, wants_pct: 20, savings_pct: 20, goal_amount: 1_00, reminders_enabled: false, reminder_days: 3 };
+    let saved = settings::save(&mut c, &ok).unwrap();
+    assert_eq!((saved.needs_pct, saved.reminders_enabled, saved.reminder_days), (60, false, 3));
+    assert!(settings::save(&mut c, &Settings { reminder_days: 9, ..ok }).is_err());
 }
 
 #[test]

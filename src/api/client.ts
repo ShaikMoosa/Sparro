@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 export type ApiError = { kind: "validation" | "not_found" | "conflict" | "database" | "internal"; message: string };
 
-const inTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
+export const inTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 
 /**
  * Call a Rust command. Outside the desktop app (plain `npm run dev` in a browser)

@@ -15,6 +15,10 @@ Works on Windows 10 (22H2+) and Windows 11. On Windows 10 the installer download
 
 Your data lives in `%APPDATA%\com.sparro.app\sparro.db` (a single SQLite file).
 
+- **Back up / restore:** Settings → Your data saves a `.sparro` backup file, or restores one (replacing current data).
+- **CSV export:** Expenses → Export CSV saves the entries matching your current filters, ready for Excel.
+- **Renewal reminders:** while Sparro is open, Windows notifies you 1–7 days (default 2) before an active subscription renews. Turn it off or change the timing in Settings.
+
 ## What's inside
 
 | Layer | Technology |

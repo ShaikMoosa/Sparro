@@ -74,6 +74,11 @@ export const api = {
     save: (input: Settings) => call<Settings>("save_settings", { input }),
   },
   dashboard: (month: string) => call<Dashboard>("get_dashboard", { month }),
+  data: {
+    backup: (path: string) => call<void>("backup_database", { path }),
+    restore: (path: string) => call<void>("restore_database", { path }),
+    exportExpenses: (filter: ExpenseFilter, path: string) => call<number>("export_expenses", { filter, path }),
+  },
 };
 
 export const queryClient = new QueryClient({

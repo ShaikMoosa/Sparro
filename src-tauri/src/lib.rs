@@ -6,22 +6,58 @@ pub mod service;
 
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod tests_data;
 
 use std::sync::Mutex;
+use std::time::Duration;
 
-use tauri::Manager;
+use tauri::{AppHandle, Manager};
+use tauri_plugin_notification::NotificationExt;
 
 use commands::*;
+use service::reminders;
+
+/// How often the running app looks for renewals to remind about.
+const REMINDER_INTERVAL: Duration = Duration::from_secs(30 * 60);
+
+/// Send one Windows notification per upcoming renewal (SUB-09), then remember it.
+fn check_reminders(app: &AppHandle) {
+    let db = app.state::<Db>();
+    let today = commands::today();
+    let due = match reminders::due(&db.lock(), today) {
+        Ok(d) => d,
+        Err(_) => return,
+    };
+    for sub in due {
+        let (title, body) = reminders::message(&sub, today);
+        if app.notification().builder().title(&title).body(&body).show().is_ok() {
+            let _ = reminders::mark_notified(&db.lock(), sub.id, &sub.renews_on);
+        }
+    }
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             // %APPDATA%\com.sparro.app\sparro.db — data never leaves this PC (SYS-01).
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
             let conn = db::open(&dir.join("sparro.db")).map_err(|e| e.to_string())?;
             app.manage(Db(Mutex::new(conn)));
+
+            // Check shortly after launch, then every 30 minutes while Sparro is open.
+            let handle = app.handle().clone();
+            std::thread::spawn(move || {
+                std::thread::sleep(Duration::from_secs(5));
+                loop {
+                    check_reminders(&handle);
+                    std::thread::sleep(REMINDER_INTERVAL);
+                }
+            });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -61,6 +97,9 @@ pub fn run() {
             save_settings,
             get_dashboard,
             get_today,
+            backup_database,
+            restore_database,
+            export_expenses,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Sparro");
