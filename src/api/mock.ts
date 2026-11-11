@@ -74,7 +74,7 @@ function seed() {
     e("Milk and staples", "Groceries", 1, 1, 1_360_00),
   ];
   const incomes: IncomeRow[] = [
-    { id: id(), name: "Salary", accountId: 2, date: day(5), amount: 39_800_00 },
+    { id: id(), name: "Salary", accountId: 2, date: day(5), amount: 1_15_000_00 },
     { id: id(), name: "Freelance", accountId: 3, date: day(5), amount: 100_00 },
   ];
   const transfers: TransferRow[] = [

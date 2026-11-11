@@ -26,3 +26,4 @@ dist-ssr
 # Local tool config
 .claude/
 
+release-downloads/

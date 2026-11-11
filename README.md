@@ -2,6 +2,8 @@
 
 Private, offline budgeting for Windows. Track expenses, income, accounts, transfers, investments and subscriptions against a Needs / Wants / Savings budget. Your data never leaves your PC.
 
+![Sparro Dashboard: goal, net worth, budget against limits, renewals this week, recent transactions and where the money went](docs/screenshots/dashboard.png)
+
 ## Download
 
 Get the latest installer from [Releases](https://github.com/ShaikMoosa/Sparro/releases/latest):
@@ -18,6 +20,25 @@ Your data lives in `%APPDATA%\com.sparro.app\sparro.db` (a single SQLite file).
 - **Back up / restore:** Settings → Your data saves a `.sparro` backup file, or restores one (replacing current data).
 - **CSV export:** Expenses → Export CSV saves the entries matching your current filters, ready for Excel.
 - **Renewal reminders:** while Sparro is open, Windows notifies you 1–7 days (default 2) before an active subscription renews. Turn it off or change the timing in Settings.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><b>Expenses</b>: filter by bucket, category, account and dates; export to CSV.<br><br><img src="docs/screenshots/expenses.png" alt="Expenses page with filters and a table of this month's expenses"></td>
+    <td width="50%"><b>Accounts</b>: balances, monthly income and transfers between accounts.<br><br><img src="docs/screenshots/accounts.png" alt="Accounts page with balance breakdown, income list and transfers list"></td>
+  </tr>
+  <tr>
+    <td width="50%"><b>Investments</b>: stocks and mutual funds with gain, return and monthly SIPs.<br><br><img src="docs/screenshots/investments.png" alt="Investments page with portfolio summary and stock holdings table"></td>
+    <td width="50%"><b>Subscriptions</b>: monthly and yearly cost, renewal dates and Pay now.<br><br><img src="docs/screenshots/subscriptions.png" alt="Subscriptions page with cost summary, status filter and subscription cards"></td>
+  </tr>
+  <tr>
+    <td width="50%"><b>Categories</b>: organised by bucket, each with its own colour.<br><br><img src="docs/screenshots/categories.png" alt="Categories page with Needs, Wants and Savings columns"></td>
+    <td width="50%"><b>Settings</b>: budget split, goal, renewal reminders, backup and restore.<br><br><img src="docs/screenshots/settings.png" alt="Settings page with budget rules, financial goal, renewal reminders and data backup"></td>
+  </tr>
+</table>
+
+<sub>Screenshots show sample data.</sub>
 
 ## What's inside
 
