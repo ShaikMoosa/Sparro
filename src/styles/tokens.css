@@ -1,0 +1,140 @@
+/*
+ * Design tokens copied from the Sparro Figma variables
+ * (collections: Sparro · Colors, Typography, Spacing). Keep names in sync with Figma.
+ */
+:root {
+  /* Text */
+  --text-primary: #18191c;
+  --text-strong: #020617;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-table-header: #696a79;
+  --text-filter-label: #686b7c;
+  --text-account-caption: #747587;
+  --text-category-initial: #39414c;
+  --text-account-initial: #3e495a;
+  --text-success: #007a37;
+  --text-danger: #b42318;
+  --text-required: #d60021;
+  --text-on-dark: #ffffff;
+  --text-link: #4338ca;
+
+  /* Surfaces & borders */
+  --surface-card: #ffffff;
+  --surface-canvas: #fafafa;
+  --surface-subtle: #f5f5f7;
+  --border-default: #e8e9ed;
+  --border-input: #e2e9f0;
+  --border-divider: #eeeef2;
+  --navigation-selected: #ebebeb;
+  --action-primary: #17181c;
+  --action-primary-hover: #33353d;
+  --action-danger: #a8444a;
+  --action-danger-hover: #8e383d;
+  --close-button: #edf2f7;
+  --overlay-scrim: rgba(24, 25, 28, 0.18);
+  --toggle-track: #e2e9f0;
+  --toggle-on: #5b4be7;
+
+  /* Focus: 3:1+ against white and the canvas (WCAG 2.4.11 / 1.4.11) */
+  --focus-ring: #2459e8;
+
+  /* Icons */
+  --icon-default: #475569;
+  --icon-active: #020617;
+  --icon-action: #666875;
+
+  /* Budget */
+  --budget-track: #f0f0f3;
+  --budget-near-limit: #fde9b8;
+  --budget-over-limit: #fbd0d0;
+  --budget-limit-marker: #5b5b5b;
+  --budget-needs: #7072ff;
+  --budget-wants: #ffad3d;
+  --budget-savings: #84cc16;
+
+  /* Goal */
+  --goal-investments: #ceaffc;
+  --goal-accounts: #fde2cc;
+
+  /* Buckets */
+  --bucket-needs-bg: #e9f0ff;
+  --bucket-needs-fg: #2459e8;
+  --bucket-wants-bg: #f2e9ff;
+  --bucket-wants-fg: #7f41dd;
+  --bucket-savings-bg: #e1f5ed;
+  --bucket-savings-fg: #127a61;
+
+  /* Category palette (background / foreground pairs) */
+  --cat-blue-bg: #e2ecff;
+  --cat-blue-fg: #2459e8;
+  --cat-green-bg: #dcf5ec;
+  --cat-green-fg: #127a61;
+  --cat-teal-bg: #d9f4f8;
+  --cat-teal-fg: #2f7085;
+  --cat-amber-bg: #fff1db;
+  --cat-amber-fg: #95573f;
+  --cat-pink-bg: #fbe3f0;
+  --cat-pink-fg: #91536f;
+  --cat-rose-bg: #fde3e4;
+  --cat-rose-fg: #a8444a;
+  --cat-terracotta-bg: #fdebdd;
+  --cat-terracotta-fg: #95573f;
+  --cat-purple-bg: #eee7fe;
+  --cat-purple-fg: #6e48a4;
+  --cat-violet-bg: #f2e9ff;
+  --cat-violet-fg: #7f41dd;
+  --cat-lime-bg: #ecf6dc;
+  --cat-lime-fg: #537432;
+
+  /* Renewals */
+  --renewal-standard: #f34098;
+  --renewal-upcoming: #ef7900;
+
+  /* Typography */
+  --font-body: "Inter", system-ui, "Segoe UI", sans-serif;
+  --font-logo: "Stack Sans Notch", var(--font-body);
+  --size-10: 10px;
+  --size-11: 11px;
+  --size-12: 12px;
+  --size-14: 14px;
+  --size-16: 16px;
+  --size-20: 20px;
+
+  /* Spacing */
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+
+  /* Radius & elevation */
+  --radius-input: 6px;
+  --radius-control: 8px;
+  --radius-field: 12px;
+  --radius-card: 11px;
+  --radius-panel: 16px;
+  --radius-hero: 18px;
+  --radius-dialog: 24px;
+  --shadow-s: 0 0.3px 0.51px rgba(0, 0, 0, 0.06), 0 1.14px 2.72px rgba(0, 0, 0, 0.02);
+  --shadow-m: 0 5px 9px rgba(0, 0, 0, 0.02), 0 1.14px 4px rgba(0, 0, 0, 0.08), 0 0.3px 1px rgba(0, 0, 0, 0.02);
+  --shadow-dialog: 0 0.3px 1px rgba(0, 0, 0, 0.02), 0 1.14px 4px rgba(0, 0, 0, 0.08), 0 24px 48px rgba(0, 0, 0, 0.08);
+  --shadow-focused-control: 0 0 0 3px rgba(140, 140, 140, 0.15), 0 0.3px 1.5px -1.5px rgba(0, 0, 0, 0.08),
+    0 1.14px 5.72px -3px rgba(0, 0, 0, 0.1);
+
+  /* Layout */
+  --sidebar-width: 216px;
+  --content-max: 1158px;
+}
+
+@media (forced-colors: active) {
+  :root {
+    --focus-ring: Highlight;
+  }
+}
